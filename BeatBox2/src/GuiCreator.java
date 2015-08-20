@@ -8,6 +8,7 @@ import java.awt.event.*;
 public class GuiCreator {
 	JPanel hauptPanel;
 	ArrayList<JCheckBox> checkboxListe;
+	ArrayList<int[]> trackLists;
 	JFrame derFrame;
 	int anzahlCheckBoxen = 256;
 	Box buttonBox;
@@ -78,15 +79,15 @@ public class GuiCreator {
 
 	public class MeinStartListener implements ActionListener{
 		public void actionPerformed(ActionEvent a){
-			
-		    player.trackErstellenUndStarten(checkBoxes());
+			player.trackErstellenUndStarten(checkBoxes());
 		}
 
-		private int[] checkBoxes() {
+		private ArrayList<int[]> checkBoxes() {
 			int[] trackListe = null;
+			trackLists = new ArrayList<int[]>();
+			
 			for (int i = 0; i < 16; i++) {
 				trackListe = new int[16];
-				
 				int taste = inst[i].getId();
 				
 				for (int j = 0; j < 16; j++) {
@@ -98,10 +99,11 @@ public class GuiCreator {
 						trackListe[j] = 0;
 					}
 				}
+				trackLists.add(trackListe);
+			}
+			return trackLists;	
 		}
-			return trackListe;
 	}
-}
 	
 	public class MeinStoppListener implements ActionListener{
 		public void actionPerformed(ActionEvent a){
