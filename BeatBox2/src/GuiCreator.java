@@ -2,6 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 import java.awt.event.*;
+import java.io.*;
 
 
 
@@ -41,6 +42,22 @@ public class GuiCreator {
 		createButton("Stoppen", new MeinStoppListener());
 		createButton("Schneller", new MeinSchnellerListener());
 		createButton("Langsamer", new MeinLangsamerListener());
+		
+		JMenuBar menüleiste = new JMenuBar();
+		JMenu menüPattern = new JMenu("Pattern");
+		JMenuItem menüPunktSpeichern = new JMenuItem("Speichern");
+		JMenuItem menüPunktLaden = new JMenuItem("Laden");
+		JMenuItem menüPunktNeu = new JMenuItem("Neu");
+		
+		menüPunktNeu.addActionListener(new MeinNeuListener());
+		menüPunktSpeichern.addActionListener(new MeinSendenListener());
+		menüPunktLaden.addActionListener(new MeinEinlesenListener());
+		
+		menüPattern.add(menüPunktNeu);
+		menüPattern.add(menüPunktSpeichern);
+		menüPattern.add(menüPunktLaden);
+		menüleiste.add(menüPattern);
+		
 			
 		Box namensBox = new Box(BoxLayout.Y_AXIS);
 		for (int i = 0; i < inst.length; i++) {
@@ -65,9 +82,11 @@ public class GuiCreator {
 			hauptPanel.add(c);
 		}
 		
+		derFrame.setJMenuBar(menüleiste);
 		derFrame.setBounds(50, 50, 300, 300);
 		derFrame.pack();
-		derFrame.setVisible(true);		
+		derFrame.setVisible(true);
+		
 	}
 	
 	private void createButton(String name, ActionListener listener) {
@@ -76,32 +95,32 @@ public class GuiCreator {
 		buttonBox.add(button);
 		
 	}
+	
+	private ArrayList<int[]> checkBoxes() {
+		int[] trackListe = null;
+		trackLists = new ArrayList<int[]>();
+		
+		for (int i = 0; i < 16; i++) {
+			trackListe = new int[16];
+			int taste = inst[i].getId();
+			
+			for (int j = 0; j < 16; j++) {
+				JCheckBox jc = checkboxListe.get(j + (16*i));
+				if (jc.isSelected()) {
+					trackListe[j] = taste;
+				}
+				else{
+					trackListe[j] = 0;
+				}
+			}
+			trackLists.add(trackListe);
+		}
+		return trackLists;	
+	}
 
 	public class MeinStartListener implements ActionListener{
 		public void actionPerformed(ActionEvent a){
 			player.trackErstellenUndStarten(checkBoxes());
-		}
-
-		private ArrayList<int[]> checkBoxes() {
-			int[] trackListe = null;
-			trackLists = new ArrayList<int[]>();
-			
-			for (int i = 0; i < 16; i++) {
-				trackListe = new int[16];
-				int taste = inst[i].getId();
-				
-				for (int j = 0; j < 16; j++) {
-					JCheckBox jc = checkboxListe.get(j + (16*i));
-					if (jc.isSelected()) {
-						trackListe[j] = taste;
-					}
-					else{
-						trackListe[j] = 0;
-					}
-				}
-				trackLists.add(trackListe);
-			}
-			return trackLists;	
 		}
 	}
 	
@@ -123,6 +142,79 @@ public class GuiCreator {
 			float tempoFactor = midiUtil.sequencer.getTempoFactor();
 			midiUtil.sequencer.setTempoFactor((float)(tempoFactor * 0.97));
 		}
+	}
+	
+	public class MeinSendenListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent a) {
+			boolean[] checkboxZustand = new boolean[256];
+			
+			for (int i = 0; i < checkboxZustand.length; i++) {
+				JCheckBox check = (JCheckBox)checkboxListe.get(i);
+				if (check.isSelected()) {
+					checkboxZustand[i] = true;
+				}
+			}
+			try{
+				JFileChooser dateiWahl = new JFileChooser();
+				dateiWahl.showSaveDialog(derFrame);
+				FileOutputStream fileStream = new FileOutputStream(dateiWahl.getSelectedFile());
+				ObjectOutputStream os = new ObjectOutputStream(fileStream);
+				os.writeObject(checkboxZustand);
+				os.close();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}	
+	}
+	
+	public class MeinEinlesenListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent a) {
+			boolean[] checkboxZustand = null;
+			try{
+				JFileChooser dateiÖffnen = new JFileChooser();
+				dateiÖffnen.showOpenDialog(derFrame);
+				FileInputStream fileIn = new FileInputStream(dateiÖffnen.getSelectedFile());
+				ObjectInputStream is = new ObjectInputStream(fileIn);
+				checkboxZustand = (boolean[]) is.readObject();
+				is.close();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			for (int i = 0; i < checkboxZustand.length; i++) {
+				JCheckBox check = (JCheckBox) checkboxListe.get(i);
+				if (checkboxZustand[i]) {
+					check.setSelected(true);
+				}
+				else{
+					check.setSelected(false);
+				}
+			}
+			
+			midiUtil.sequencer.stop();
+			player.trackErstellenUndStarten(checkBoxes());
+		}
+		
+	}
+	
+	public class MeinNeuListener implements ActionListener{
+
+		
+		public void actionPerformed(ActionEvent a) {
+			trackLists.clear();
+			for(JCheckBox checkBox : checkboxListe){
+				checkBox.setSelected(false);
+			}
+			midiUtil.sequencer.stop();
+			
+		}
+		
 	}
 	
 

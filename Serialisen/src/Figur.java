@@ -1,6 +1,7 @@
 import java.io.Serializable;
 
 public class Figur implements Serializable {
+	
 	private String name;
 	
 	public String getName(){
