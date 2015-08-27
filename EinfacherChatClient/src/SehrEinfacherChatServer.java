@@ -60,9 +60,10 @@ public class SehrEinfacherChatServer {
 	
 	public void esAllenWeitersagen(String nachricht){
 		Iterator it = clientOutputFlows.iterator();
+		PrintWriter writer;
 		while(it.hasNext()){
 			try{
-				PrintWriter writer = (PrintWriter) it.next();
+				writer = (PrintWriter) it.next();
 				writer.println(nachricht);
 				writer.flush();
 			}
