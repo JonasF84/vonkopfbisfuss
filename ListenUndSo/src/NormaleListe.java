@@ -43,7 +43,10 @@ public class NormaleListe {
 				}
 			}
 			datastructure = newArray;
-		}		
+		}
+		else{
+			System.out.println("index " + index + " is out of bounds");
+		}
 	}
 	
 	public String toString(){

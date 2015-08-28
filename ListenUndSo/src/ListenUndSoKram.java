@@ -3,18 +3,22 @@
 public class ListenUndSoKram {
 
 	public static void main(String[] args) {
-		NormaleListe neueListe = new NormaleListe();
-		neueListe.add("bla");
-		neueListe.add("zwei");
+		VerketteteListe liste = new VerketteteListe();
+		liste.add("eins"); // 0
+		liste.add("zwei"); // 1
+		liste.add("drei"); // 2
+		liste.add("vier"); // 3
+		liste.add("fünf"); // 4 
+		liste.add("sechs"); // 5 
+		liste.add("sieben"); // 6
 		
-		System.out.println(neueListe.toString());
+		System.out.println(liste.getSize());
 		
-		neueListe.remove(0);
 		
-		System.out.println(neueListe.toString());
-		
-		System.out.println(neueListe.get(0));
-		
+		liste.remove(6);
+		liste.remove(5);
+		liste.remove(0);
+		System.out.println(liste.getSize());
 		
 	}
 
