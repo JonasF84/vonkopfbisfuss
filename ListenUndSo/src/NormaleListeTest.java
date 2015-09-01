@@ -1,7 +1,10 @@
 import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Ignore;
+
 import static org.hamcrest.CoreMatchers.*;
 
+@Ignore
 public class NormaleListeTest {
 	
 	NormaleListe liste = new NormaleListe();
